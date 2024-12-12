@@ -7,6 +7,8 @@ import edu.miu.cs425.kllbankingsolution.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class UserService {
     @Autowired
@@ -38,8 +40,12 @@ public class UserService {
         User user = userRepository.findByUsername(userPojo.getUsername());
         try {
             //update only provided field in the userpojo
-            user.setUsername(userPojo.getUsername());
-            user.setPassword(userPojo.getPassword());
+            if (userPojo.getUsername() != null) {
+                user.setUsername(userPojo.getUsername());
+            }
+            if (userPojo.getPassword() != null) {
+                user.setPassword(userPojo.getPassword());
+            }
             userRepository.save(user);
 
             response.setResponseCode("200");
@@ -50,6 +56,31 @@ public class UserService {
             response.setResponseMessage("Failed to update user");
 
         }
+        return response;
+    }
+
+    public Response deleteUser(UserPojo userPojo) {
+        Response response = new Response();
+
+        User user = userRepository.findByUsername(userPojo.getUsername());
+        if(user!=null){
+            userRepository.delete(user);
+            response.setResponseCode("200");
+            response.setResponseMessage("User Deleted");
+        }else {
+            response.setResponseCode("400");
+            response.setResponseMessage("user not found");
+        }
+        return response;
+    }
+
+    public Response getAllUsers() {
+        Response response = new Response();
+        List<User> users = userRepository.findAll();
+        response.setResponseCode("200");
+        response.setResponseMessage("success");
+        response.setResponseObject(users);
+
         return response;
     }
 }

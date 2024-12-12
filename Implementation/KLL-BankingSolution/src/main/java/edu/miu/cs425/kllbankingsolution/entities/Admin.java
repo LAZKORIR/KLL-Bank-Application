@@ -1,11 +1,10 @@
 package edu.miu.cs425.kllbankingsolution.entities;
 
 import jakarta.persistence.*;
-import lombok.Data;
 
 @Entity
 @Table(name = "tbl_admin")
-@Data
+
 public class Admin {
 
     @Id

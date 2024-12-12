@@ -1,9 +1,5 @@
 package edu.miu.cs425.kllbankingsolution.dto;
 
-import lombok.ToString;
-
-
-@ToString
 public class UserPojo {
     private String username;
     private String password;

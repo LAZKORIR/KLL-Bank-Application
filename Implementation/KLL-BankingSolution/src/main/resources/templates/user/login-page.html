@@ -1,13 +1,39 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head><title>Login</title></head>
+<head>
+    <title>Login</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
 <body>
-<h1>Login</h1>
-<form th:action="@{/login}" method="post">
-    <label>Username: <input type="text" name="username"/></label><br/>
-    <label>Password: <input type="password" name="password"/></label><br/>
-    <button type="submit">Login</button>
-</form>
-<p>New here? <a th:href="@{/register}">Register</a></p>
+<div class="login-container">
+    <h2>Login</h2>
+
+    <form th:action="@{/login}" th:object="${loginForm}" method="post">
+        <div>
+            <label for="username">Username:</label>
+            <input type="text" id="username" th:field="*{username}" required>
+            <span class="error" th:if="${#fields.hasErrors('username')}"
+                  th:text="${#fields.errors('username')}"></span>
+        </div>
+
+        <div>
+            <label for="password">Password:</label>
+            <input type="password" id="password" th:field="*{password}" required>
+            <span class="error" th:if="${#fields.hasErrors('password')}"
+                  th:text="${#fields.errors('password')}"></span>
+        </div>
+
+        <button type="submit">Login</button>
+
+        <div th:if="${loginError}" class="error">
+            <p th:text="${loginError}"></p>
+        </div>
+
+        <div th:if="${logoutMessage}" class="success">
+            <p th:text="${logoutMessage}"></p>
+        </div>
+    </form>
+    <p>New here? <a th:href="@{/register}">Register</a></p>
+</div>
 </body>
 </html>

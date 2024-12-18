@@ -1,65 +1,58 @@
 package edu.miu.cs425.kllbankingsolution.config;
 
+import edu.miu.cs425.kllbankingsolution.repository.UserRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
+@EnableWebSecurity
 public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/login", "/register").permitAll()
+                        .requestMatchers("/login","/register", "/css/**", "/js/**", "/h2-console/**").permitAll()
+                        .requestMatchers("/dashboard").permitAll() // Allow roles
                         .requestMatchers("/customer/**").hasRole("CUSTOMER")
                         .requestMatchers("/teller/**").hasRole("TELLER")
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )
+                .headers(headers -> headers
+                        .frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin)) // Allow H2 iframe access
                 .formLogin(form -> form
-                        .loginPage("/login").permitAll()
+                        .loginPage("/login")
                         .defaultSuccessUrl("/dashboard", true)
+                        .failureUrl("/login?error=true")
+                        .permitAll()
                 )
                 .logout(logout -> logout
-                        .logoutUrl("/logout").permitAll()
-                );
+                        .logoutSuccessUrl("/login?logout=true")
+                        .permitAll()
+                )
+                .csrf(AbstractHttpConfigurer::disable); // Optional: Disable CSRF for development
+
         return http.build();
     }
 
     @Bean
-    public org.springframework.security.core.userdetails.UserDetailsService userDetailsService(PasswordEncoder passwordEncoder) {
-        UserDetails customer = User.builder()
-                .username("customerUser")
-                .password(passwordEncoder.encode("password")) // Correct use of PasswordEncoder
-                .roles("CUSTOMER")
-                .build();
-
-        UserDetails teller = User.builder()
-                .username("tellerUser")
-                .password(passwordEncoder.encode("password")) // Correct password encoding
-                .roles("TELLER")
-                .build();
-
-        UserDetails admin = User.builder()
-                .username("adminUser")
-                .password(passwordEncoder.encode("password")) // Correct password encoding
-                .roles("ADMIN")
-                .build();
-
-        return new InMemoryUserDetailsManager(customer, teller, admin);
-    }
-
-
-    @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    public UserDetailsService userDetailsService(UserRepository userRepository) {
+        return username -> userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
     }
 }

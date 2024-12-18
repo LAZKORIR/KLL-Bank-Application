@@ -1,6 +1,5 @@
 package edu.miu.cs425.kllbankingsolution.service;
 
-import edu.miu.cs425.kllbankingsolution.dto.Role;
 import edu.miu.cs425.kllbankingsolution.entities.User;
 import edu.miu.cs425.kllbankingsolution.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,11 +16,7 @@ public class UserService {
     private PasswordEncoder passwordEncoder;
 
     // Add a new user
-    public void addUser(String username, String password, Role role) {
-        User user = new User();
-        user.setUsername(username);
-        user.setPassword(passwordEncoder.encode(password));
-        user.setRole(role);
+    public void addUser(User user) {
         userRepository.save(user);
     }
 

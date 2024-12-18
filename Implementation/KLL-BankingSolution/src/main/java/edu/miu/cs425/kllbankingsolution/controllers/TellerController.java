@@ -1,26 +1,28 @@
 package edu.miu.cs425.kllbankingsolution.controllers;
 
-import edu.miu.cs425.kllbankingsolution.dto.CustomerRequestDTO;
-import edu.miu.cs425.kllbankingsolution.dto.Response;
-import edu.miu.cs425.kllbankingsolution.service.CustomerService;
+import edu.miu.cs425.kllbankingsolution.service.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RequestParam;
 
-@RestController
+@Controller
 @RequestMapping("/teller")
 public class TellerController {
-
     @Autowired
-    private CustomerService customerService;
-    //create customer
-    @PostMapping("/create-customer")
-    public ResponseEntity<Response> createCustomer(@RequestBody CustomerRequestDTO customerRequestDTO) {
+    private AccountService accountService;
 
-        return new ResponseEntity<>(customerService.createCustomer(customerRequestDTO), HttpStatus.OK);
+    @PostMapping("/deposit")
+    public String deposit(@RequestParam Long accountId, @RequestParam double amount) {
+        accountService.deposit(accountId, amount);
+        return "redirect:/teller/dashboard";
+    }
+
+    @PostMapping("/withdraw")
+    public String withdraw(@RequestParam Long accountId, @RequestParam double amount) {
+        accountService.withdraw(accountId, amount);
+        return "redirect:/teller/dashboard";
     }
 }
+

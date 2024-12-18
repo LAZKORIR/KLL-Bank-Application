@@ -1,5 +1,6 @@
 package edu.miu.cs425.kllbankingsolution.entities;
 
+import edu.miu.cs425.kllbankingsolution.dto.Role;
 import jakarta.persistence.*;
 
 @Entity
@@ -12,6 +13,9 @@ public class User {
     private String username;
 
     private String password;
+
+    @Enumerated(EnumType.STRING)
+    private Role role; // Role added for role-based login
 
     public String getUsername() {
         return username;
@@ -27,5 +31,13 @@ public class User {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public Role getRole() {
+        return role;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
     }
 }

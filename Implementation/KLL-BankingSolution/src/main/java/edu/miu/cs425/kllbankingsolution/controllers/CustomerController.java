@@ -1,23 +1,39 @@
 package edu.miu.cs425.kllbankingsolution.controllers;
 
-import edu.miu.cs425.kllbankingsolution.dto.Response;
-import edu.miu.cs425.kllbankingsolution.service.CustomerService;
+import edu.miu.cs425.kllbankingsolution.service.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RequestParam;
 
-@RestController
+import java.security.Principal;
+
+@Controller
 @RequestMapping("/customer")
 public class CustomerController {
     @Autowired
-    private CustomerService customerService;
+    private AccountService accountService;
+@GetMapping("/dashboard")
+public String dashboard(Model model, Principal principal) {
+    model.addAttribute("customer", principal.getName());
+    return "customer/customer-home-page";
+}
+    @GetMapping("/balance")
+    public String checkBalance(Model model, Principal principal) {
+        Long accountId = Long.parseLong(principal.getName());
+        double balance = accountService.checkBalance(accountId);
+        model.addAttribute("balance", balance);
+        return "customer_balance";
+    }
 
-    @GetMapping("/get-all-customers")
-    public ResponseEntity<Response> getCustomers() {
-
-        return new ResponseEntity<>(customerService.getAllCustomers(), HttpStatus.OK);
+    @PostMapping("/transfer")
+    public String transferMoney(@RequestParam Long toAccountId, @RequestParam double amount, Principal principal) {
+        Long fromAccountId = Long.parseLong(principal.getName());
+        accountService.transfer(fromAccountId, toAccountId, amount);
+        return "redirect:/customer/dashboard";
     }
 }
+

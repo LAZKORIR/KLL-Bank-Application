@@ -1,0 +1,16 @@
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Teller Dashboard</title>
+</head>
+<body>
+<h1>Welcome, Teller</h1>
+<ul>
+    <li><a th:href="@{/teller/deposit}">Deposit Money</a></li>
+    <li><a th:href="@{/teller/withdraw}">Withdraw Money</a></li>
+    <li><a th:href="@{/teller/customer-transactions}">View Customer Transactions</a></li>
+    <li><a th:href="@{/teller/check-balance}">Check Customer Balance</a></li>
+</ul>
+</body>
+</html>

@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head><title>Customer Dashboard</title></head>
+<body>
+<h1>Welcome, <span th:text="${customer}">Customer</span>!</h1>
+<ul>
+    <li><a th:href="@{/customer/balance}">Check Balance</a></li>
+    <li><a th:href="@{/customer/transfer}">Transfer Money</a></li>
+    <li><a th:href="@{/customer/transactions}">View Transactions</a></li>
+</ul>
+<form th:action="@{/logout}" method="post">
+    <button type="submit">Logout</button>
+</form>
+</body>
+</html>

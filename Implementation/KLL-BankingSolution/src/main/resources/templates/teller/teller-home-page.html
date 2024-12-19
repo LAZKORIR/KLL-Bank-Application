@@ -1,16 +1,18 @@
-
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Teller Dashboard</title>
+    <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
-<h1>Welcome, Teller</h1>
-<ul>
-    <li><a th:href="@{/teller/deposit}">Deposit Money</a></li>
-    <li><a th:href="@{/teller/withdraw}">Withdraw Money</a></li>
-    <li><a th:href="@{/teller/customer-transactions}">View Customer Transactions</a></li>
-    <li><a th:href="@{/teller/check-balance}">Check Customer Balance</a></li>
-</ul>
+<div class="pane">
+    <h1>Welcome, Teller</h1>
+    <div class="actions">
+        <button class="action-btn"><a th:href="@{/teller/deposit}">Deposit Money</a></button>
+        <button class="action-btn"><a th:href="@{/teller/withdraw}">Withdraw Money</a></button>
+        <button class="action-btn"><a th:href="@{/teller/add-customer}">Add Customer</a></button>
+        <button class="action-btn"><a th:href="@{/teller/transfer}">Transfer Funds</a></button>
+    </div>
+</div>
 </body>
 </html>

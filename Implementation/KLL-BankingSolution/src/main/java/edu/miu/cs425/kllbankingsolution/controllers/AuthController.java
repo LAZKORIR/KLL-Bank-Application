@@ -7,6 +7,7 @@ import edu.miu.cs425.kllbankingsolution.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -14,7 +15,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import java.security.Principal;
 import java.util.Optional;
 
 @Controller
@@ -41,6 +41,11 @@ public class AuthController {
             model.addAttribute("logoutMessage", "You have been logged out successfully.");
         }
         return "user/login-page";
+    }
+
+    @GetMapping("/")
+    public String redirectToLogin() {
+        return "redirect:/login";
     }
 
     @GetMapping("/register")
@@ -71,35 +76,16 @@ public class AuthController {
         return "redirect:/login";
     }
 
-    //@GetMapping("/dashboard")
-    public String dashboard(Model model, Principal principal, Authentication authentication) {
-        String username = principal.getName();
-        String role = authentication.getAuthorities().iterator().next().getAuthority();
+    @GetMapping("/home")
+    public String home() {
+        // Retrieve the authenticated user
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-        switch (role) {
-            case "CUSTOMER" -> {
-                model.addAttribute("customer", username);
-                return "customer/customer-home-page"; // Redirect to customer page
-            }
-            case "TELLER" -> {
-                model.addAttribute("teller", username);
-                return "teller/teller-home-page"; // Redirect to teller page
-            }
-            case "ADMIN" -> {
-                model.addAttribute("admin", username);
-                return "admin/admin-home-page"; // Redirect to admin page
-            }
-        }
-        return "redirect:/login"; // Fallback in case of an unknown role
-    }
-    @GetMapping("/dashboard")
-    public String home(Authentication authentication) {
-        // Log Authentication details and roles
+        // Log authentication and roles for debugging
         System.out.println("Authentication: " + authentication);
-        authentication.getAuthorities().forEach(auth ->
-                System.out.println("Authority: " + auth.getAuthority())
-        );
+        System.out.println("Authorities: " + authentication.getAuthorities());
 
+        // Map the authenticated user's role to a redirect path
         return Optional.of(authentication)
                 .map(Authentication::getAuthorities)
                 .flatMap(authorities -> authorities.stream()
@@ -108,11 +94,11 @@ public class AuthController {
                 .map(GrantedAuthority::getAuthority)
                 .map(role -> switch (role) {
                     case "ROLE_CUSTOMER" -> "redirect:/customer/dashboard";
-                    case "ROLE_TELLER" -> "redirect:/teller";
-                    case "ROLE_ADMIN" -> "redirect:/admin";
+                    case "ROLE_TELLER" -> "redirect:/teller/dashboard";
+                    case "ROLE_ADMIN" -> "redirect:/admin/dashboard";
                     default -> throw new IllegalStateException("Unknown role: " + role);
                 })
-                .orElseThrow(() -> new IllegalStateException("User has no roles assigned"));
+                .orElse("redirect:/error?message=User%20has%20no%20roles%20assigned");
     }
 
 }

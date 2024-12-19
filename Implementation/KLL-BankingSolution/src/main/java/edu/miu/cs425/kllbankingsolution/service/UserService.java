@@ -16,8 +16,8 @@ public class UserService {
     private PasswordEncoder passwordEncoder;
 
     // Add a new user
-    public void addUser(User user) {
-        userRepository.save(user);
+    public User addUser(User user) {
+        return userRepository.save(user);
     }
 
     // Fetch user by username

@@ -1,15 +1,49 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head><title>Customer Dashboard</title></head>
+<head>
+    <title>Customer Dashboard</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
 <body>
-<h1>Welcome, <span th:text="${customer}">Customer</span>!</h1>
-<ul>
-    <li><a th:href="@{/customer/balance}">Check Balance</a></li>
-    <li><a th:href="@{/customer/transfer}">Transfer Money</a></li>
-    <li><a th:href="@{/customer/transactions}">View Transactions</a></li>
-</ul>
-<form th:action="@{/logout}" method="post">
-    <button type="submit">Logout</button>
-</form>
+<div class="pane">
+    <div class="header">
+        <h1>Welcome, <span th:text="${customer}">Customer</span>!</h1>
+    </div>
+
+    <!-- Balance -->
+    <div class="balance-section">
+        <h2>Your Balance</h2>
+        <p>Your current balance is: <span th:text="${balance}">$0.00</span></p>
+    </div>
+
+    <!-- Recent Transactions -->
+    <div class="transactions-section">
+        <h2>Recent Transactions</h2>
+        <table>
+            <thead>
+            <tr>
+                <th>Date</th>
+                <th>Transaction Type</th>
+                <th>Amount</th>
+                <th>Description</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="transaction : ${transactions}">
+                <td th:text="${transaction.dateTime}">2024-12-18</td>
+                <td th:text="${transaction.type}">DEPOSIT</td>
+                <td th:text="${transaction.amount}">$100.00</td>
+                <td th:text="${transaction.description}">Initial Deposit</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+
+
+    <form th:action="@{/logout}" method="post">
+        <button type="submit" class="action-btn">Logout</button>
+    </form>
+</div>
 </body>
 </html>

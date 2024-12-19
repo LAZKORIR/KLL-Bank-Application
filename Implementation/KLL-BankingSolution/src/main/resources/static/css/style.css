@@ -1,0 +1,202 @@
+/* Reset default styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+/* Body styling */
+body {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    background-color: #f0f0f0;
+    padding: 20px;
+}
+
+/* Centered pane with scrollable content */
+.pane {
+    width: 800px;
+    max-width: 90%;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    background-color: #fff;
+    overflow-y: auto;
+    max-height: 90vh; /* Prevents overflow off-screen */
+}
+
+/* Sticky header to remain visible */
+h1 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #333;
+    position: sticky;
+    top: 0;
+    background-color: #fff;
+    padding: 10px 0;
+    z-index: 10;
+    border-bottom: 1px solid #ddd;
+}
+
+/* Form inputs */
+input, select, button {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 1rem;
+}
+
+/* Grouping two elements per row */
+.form-group {
+    display: flex;
+    gap: 10px;
+}
+
+.form-group > * {
+    flex: 1;
+}
+
+/* Button styling */
+button {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+button:hover {
+    background-color: #45a049;
+}
+
+/* Links inside buttons */
+button a {
+    color: white;
+    text-decoration: none;
+}
+
+/* Error or success messages */
+.alert {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 1rem;
+}
+
+.alert-success {
+    color: green;
+}
+
+.alert-error {
+    color: red;
+}
+
+/* Physician-Specific Styles */
+.pane.physician {
+    width: 80%; /* Larger pane for physician view */
+    margin-top: 50px;
+}
+
+/* Search bar styling */
+.search-bar {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 15px;
+}
+
+.search-bar input {
+    width: 300px;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+/* Actions container */
+.actions {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    margin: 20px 0;
+}
+
+.action-btn {
+    flex: 1;
+    padding: 10px;
+    font-size: 1rem;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.action-btn:hover {
+    background-color: #45a049;
+}
+
+/* Table styling */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    overflow-x: auto;
+}
+
+th, td {
+    text-align: left;
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+    word-wrap: break-word; /* Prevent text overflow */
+}
+
+th {
+    background-color: #007bff;
+    color: white;
+    position: sticky;
+    top: 40px; /* Adjusted for header */
+    z-index: 5;
+}
+
+tr:hover {
+    background-color: #f1f1f1;
+}
+
+/* Responsive behavior for table rows */
+@media (max-width: 768px) {
+    .form-group {
+        flex-direction: column;
+    }
+
+    th, td {
+        font-size: 0.9rem;
+        padding: 8px;
+    }
+
+    .search-bar input {
+        width: 100%;
+    }
+}
+
+/* Scrollable tables on smaller screens */
+.table-container {
+    max-height: 50vh;
+    overflow-y: auto;
+    margin-top: 10px;
+}
+
+/* Header for displaying welcome message and user ID on the same line */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* User info styling to align it to the right */
+.user-info {
+    margin-left: auto;
+    font-weight: bold;
+}

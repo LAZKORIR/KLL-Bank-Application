@@ -26,49 +26,64 @@ public class CustomerService {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    AccountService accountService;
+
+
+    public Customer saveCustomer(Customer customer) {
+        return customerRepository.save(customer);
+    }
+
+    public Address saveAddress(Address address) {
+        return addressRepository.save(address);
+    }
+
     public Response createCustomer(CustomerRequestDTO customerRequestDTO) {
         Response response = new Response();
         try {
+            // Create Customer entity
             Customer customer = new Customer();
             customer.setFirstName(customerRequestDTO.getFirstName());
             customer.setLastName(customerRequestDTO.getLastName());
             customer.setEmail(customerRequestDTO.getEmail());
             customer.setPhone(customerRequestDTO.getPhone());
 
-            Address address = new Address(customerRequestDTO.getStreet(),customerRequestDTO.getCity(),customerRequestDTO.getState(),customerRequestDTO.getZip());
-
-            Address savedAddress=addressRepository.save(address);
+            // Create and save Address
+            Address address = new Address(customerRequestDTO.getStreet(), customerRequestDTO.getCity(), customerRequestDTO.getState(), customerRequestDTO.getZip());
+            Address savedAddress = addressRepository.save(address);
             customer.setAddress(savedAddress);
-            Customer savedCustomer=customerRepository.save(customer);
-            Account account = new Account(customerRequestDTO.getAccountNumber(), customerRequestDTO.getAccountType(), customerRequestDTO.getAccountName(), 100.0,savedCustomer);
 
-            accountRepository.save(account);
+            // Save Customer
+            Customer savedCustomer = customerRepository.save(customer);
 
+            // Create Account using AccountService
+            Account account = accountService.createAccount(savedCustomer.getCustomerId(),"", "ACC" + System.currentTimeMillis(), customerRequestDTO.getAccountType(), 0.0);
+
+            // Create User and save
             User user = new User();
             user.setUsername(customerRequestDTO.getUsername());
             user.setPassword(customerRequestDTO.getPassword());
-            User savedUser=userRepository.save(user);
+            userRepository.save(user);
 
             response.setResponseCode("200");
-            response.setResponseMessage(savedUser.getUsername()+" Account has been created successfully");
+            response.setResponseMessage(user.getUsername() + " Account has been created successfully");
 
-        }catch(Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             response.setResponseCode("500");
             response.setResponseMessage("Failed to create Customer");
-
         }
         return response;
     }
 
-    public Response getAllCustomers() {
+    public List<Customer> getAllCustomers() {
         Response response = new Response();
         List<Customer> customers= customerRepository.findAll();
         response.setResponseCode("200");
         response.setResponseMessage(customers.size()+" Customer found");
         response.setResponseObject(customers);
 
-        return response;
+        return customers;
     }
 
     public Response updateCustomer(Long customerId, CustomerRequestDTO customerRequestDTO) {

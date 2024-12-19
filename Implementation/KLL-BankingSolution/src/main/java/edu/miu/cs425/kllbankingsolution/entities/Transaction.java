@@ -3,6 +3,7 @@ package edu.miu.cs425.kllbankingsolution.entities;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 @Entity
 @Table(name = "tbl_transactions")
@@ -12,21 +13,22 @@ public class Transaction {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-
     private LocalDateTime dateTime;
     private double amount;
     private String type; // DEPOSIT, WITHDRAW, TRANSFER
+    private String description; // Optional description
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private Account account;
 
     public Transaction() {
     }
 
-    public Transaction(LocalDateTime dateTime, double amount, String type, Account account) {
+    public Transaction(LocalDateTime dateTime, double amount, String type, String description, Account account) {
         this.dateTime = dateTime;
         this.amount = amount;
         this.type = type;
+        this.description = description;
         this.account = account;
     }
 
@@ -46,9 +48,9 @@ public class Transaction {
         this.amount = amount;
     }
 
-
     public String getDateTime() {
-        return dateTime.toString();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        return dateTime.format(formatter);
     }
 
     public void setDateTime(LocalDateTime dateTime) {
@@ -61,6 +63,14 @@ public class Transaction {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public Account getAccount() {

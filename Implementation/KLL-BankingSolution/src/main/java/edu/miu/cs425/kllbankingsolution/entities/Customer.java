@@ -23,6 +23,18 @@ public class Customer {
     @OneToMany(mappedBy = "customer",cascade = CascadeType.ALL)
     private List<Account> accounts;
 
+    @OneToOne
+    @JoinColumn(name = "user_id", referencedColumnName = "userId", unique = true) // Ensure one-to-one relationship
+    private User user;
+
+    public Long getCustomerId() {
+        return customerId;
+    }
+
+    public void setCustomerId(Long customerId) {
+        this.customerId = customerId;
+    }
+
     public String getFirstName() {
         return firstName;
     }
@@ -69,5 +81,13 @@ public class Customer {
 
     public void setAccounts(List<Account> accounts) {
         this.accounts = accounts;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 }

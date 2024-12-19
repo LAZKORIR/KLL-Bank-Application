@@ -7,41 +7,35 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
-<div class="container mt-4">
-    <h2 class="text-center">Customer and Account Details</h2>
+<div class="card-body">
+    <p><strong>First Name:</strong> <span th:text="${customer.firstName}"></span></p>
+    <p><strong>Last Name:</strong> <span th:text="${customer.lastName}"></span></p>
+    <p><strong>Email:</strong> <span th:text="${customer.email}"></span></p>
+    <p><strong>Phone:</strong> <span th:text="${customer.phone}"></span></p>
+    <p><strong>Address:</strong>
+        <span th:text="${customer.address.street}"></span>,
+        <span th:text="${customer.address.city}"></span>,
+        <span th:text="${customer.address.state}"></span>,
+        <span th:text="${customer.address.zip}"></span>
+    </p>
+</div>
 
-    <!-- Customer Details -->
-    <div class="card mt-4">
-        <div class="card-header">
-            <h4>Customer Information</h4>
-        </div>
-        <div class="card-body" th:each="customer : ${customer}">
-            <p><strong>First Name:</strong> ${customer.firstName}</p>
-            <p><strong>Last Name:</strong> ${customer.lastName}</p>
-            <p><strong>Email:</strong> ${customer.email}</p>
-            <p><strong>Phone:</strong> ${customer.phone}</p>
-            <p><strong>Address:</strong> ${customer.address.street}, ${customer.address.city}, ${customer.address.state}, ${customer.address.zip}</p>
-        </div>
+<!-- Account Details -->
+<div class="card mt-4">
+    <div class="card-header">
+        <h4>Account Information</h4>
     </div>
-
-    <!-- Account Details -->
-    <div class="card mt-4">
-        <div class="card-header">
-            <h4>Account Information</h4>
+    <div class="card-body">
+        <div th:each="account : ${accounts}">
+            <p><strong>Account Number:</strong> <span th:text="${account.accountNumber}"></span></p>
+            <p><strong>Account Type:</strong> <span th:text="${account.accountType}"></span></p>
+            <p><strong>Account Name:</strong> <span th:text="${account.accountName}"></span></p>
+            <p><strong>Balance:</strong> <span th:text="${account.balance}"></span></p>
+            <hr />
         </div>
-        <div class="card-body" th:each="account : ${accountTypes}">
-            <p><strong>Account Number:</strong> ${account.accountNumber}</p>
-            <p><strong>Account Type:</strong> ${account.accountType}</p>
-            <p><strong>Account Name:</strong> ${account.accountName}</p>
-            <p><strong>Balance:</strong> ${account.balance}</p>
-        </div>
-    </div>
-
-    <!-- Back Button -->
-    <div class="mt-4">
-        <a href="/admin/customers" class="btn btn-primary">Back to Customer List</a>
     </div>
 </div>
+
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 </body>

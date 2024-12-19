@@ -35,6 +35,23 @@ public class AccountService {
         return accountRepository.save(account);
     }
 
+    public Account createAccountForExistingCustomer(
+            Long customerId,
+            String accountNumber,
+            String accountType,
+            double initialBalance) {
+
+        // Find customer by ID
+        Customer customer = customerRepository.findById(customerId)
+                .orElseThrow(() -> new RuntimeException("Customer not found with ID: " + customerId));
+        String accountName = customer.getFirstName() + " " + customer.getLastName();
+        // Create a new account
+        Account account = new Account(accountNumber, accountType, accountName, initialBalance, customer);
+
+        // Save the account
+        return accountRepository.save(account);
+    }
+
     // Check account balance
     public double checkBalance(Long userId) {
         Customer customer = customerRepository.findByUser_UserId(userId)
@@ -80,10 +97,10 @@ public class AccountService {
     }
 
     // Transfer money
-    public void transfer(String fromAccount, String targetAccount, double amount, Long customerId, String description) {
-        Account fromAcc = accountRepository.findByAccountNumberAndCustomer(fromAccount,customerId)
+    public void intraTransfer(String fromAccount, String targetAccount, double amount, Long customerId, String description) {
+        Account fromAcc = accountRepository.findByAccountTypeAndCustomer(fromAccount,customerId)
                 .orElseThrow(() -> new RuntimeException("Source account not found"));
-        Account toAccount = accountRepository.findByAccountNumberAndCustomer(targetAccount,customerId)
+        Account toAccount = accountRepository.findByAccountTypeAndCustomer(targetAccount,customerId)
                 .orElseThrow(() -> new RuntimeException("Target account not found"));
 
         if (fromAcc.getBalance() >= amount) {
@@ -100,6 +117,28 @@ public class AccountService {
         }
     }
 
+    // Transfer money
+    public void transfer(String fromAccount, String targetAccount, double amount, Long fromCustomerId,Long toCustomerId, String description) {
+        Account fromAcc = accountRepository.findByAccountNumberAndCustomer(fromAccount,fromCustomerId)
+                .orElseThrow(() -> new RuntimeException("Source account not found"));
+        Account toAccount = accountRepository.findByAccountNumberAndCustomer(targetAccount,toCustomerId)
+                .orElseThrow(() -> new RuntimeException("Target account not found"));
+
+        if (fromAcc.getBalance() >= amount) {
+            fromAcc.setBalance(fromAcc.getBalance() - amount);
+            toAccount.setBalance(toAccount.getBalance() + amount);
+
+            accountRepository.save(fromAcc);
+            accountRepository.save(toAccount);
+
+            Transaction transaction = new Transaction(LocalDateTime.now(), amount, "TRANSFER", description, fromAcc);
+            transactionRepository.save(transaction);
+        } else {
+            throw new RuntimeException("Insufficient balance.");
+        }
+    }
+
+
     // Fetch recent transactions
     public List<Transaction> getRecentTransactions(Long userId) {
         return transactionRepository.findByAccount_Customer_Id(userId)
@@ -112,4 +151,9 @@ public class AccountService {
     public List<Account> getAllAccounts() {
         return accountRepository.findAll();
     }
+
+    public List<Account> findByCustomerId(Long customerId) {
+        return accountRepository.findByCustomerId(customerId);
+    }
+
 }

@@ -30,10 +30,10 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/login", "/register", "/css/**", "/js/**", "/h2-console/**").permitAll()
-                        .requestMatchers("/home").permitAll()
+                        .requestMatchers("/home","/customer/**","/teller/**").permitAll()
                         .requestMatchers("/customer/**").hasRole("CUSTOMER")
-                        .requestMatchers("/teller/**").hasRole("TELLER")
-                        .requestMatchers("/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/teller/**","/customer/**").hasRole("TELLER")
+                        .requestMatchers("/admin/**","/teller/**").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )
                 .headers(headers -> headers

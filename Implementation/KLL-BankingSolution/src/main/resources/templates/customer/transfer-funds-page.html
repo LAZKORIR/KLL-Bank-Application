@@ -9,7 +9,7 @@
 <body>
 <div class="container mt-4">
     <h2 class="text-center">Transfer Money</h2>
-    <form action="/teller/transfer" method="post">
+    <form action="/customer/transfer" method="post">
         <div class="mb-3">
             <label for="customerId" class="form-label">Select Source Customer</label>
             <select id="customerId" name="customerId" class="form-select" required onchange="fetchAccounts('customerId', 'fromAccountType')">

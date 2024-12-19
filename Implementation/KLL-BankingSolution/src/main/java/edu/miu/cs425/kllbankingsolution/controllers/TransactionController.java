@@ -91,7 +91,7 @@ public class TransactionController {
                            @RequestParam String description,
                            Model model) {
         try {
-            accountService.transfer(fromAccount, targetAccount, amount, customerId,description);
+            accountService.transfer(fromAccount, targetAccount, amount, customerId,1L,description);
             model.addAttribute("message", "Transfer successful!");
         } catch (RuntimeException e) {
             model.addAttribute("error", e.getMessage());

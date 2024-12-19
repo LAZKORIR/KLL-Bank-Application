@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class CustomerService {
@@ -36,6 +37,20 @@ public class CustomerService {
 
     public Address saveAddress(Address address) {
         return addressRepository.save(address);
+    }
+
+    public Optional<Customer> findCustomerById(Long customerId) {
+        return customerRepository.findById(customerId);
+    }
+
+
+    public List<Customer> getAllCustomers() {
+        return customerRepository.findAll();
+    }
+
+
+    public List<Customer> searchCustomers(String keyword) {
+        return customerRepository.searchByKeyword(keyword);
     }
 
     public Response createCustomer(CustomerRequestDTO customerRequestDTO) {
@@ -74,16 +89,6 @@ public class CustomerService {
             response.setResponseMessage("Failed to create Customer");
         }
         return response;
-    }
-
-    public List<Customer> getAllCustomers() {
-        Response response = new Response();
-        List<Customer> customers= customerRepository.findAll();
-        response.setResponseCode("200");
-        response.setResponseMessage(customers.size()+" Customer found");
-        response.setResponseObject(customers);
-
-        return customers;
     }
 
     public Response updateCustomer(Long customerId, CustomerRequestDTO customerRequestDTO) {

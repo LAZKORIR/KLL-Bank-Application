@@ -9,10 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
@@ -95,15 +92,56 @@ public class TellerController {
         redirectAttributes.addAttribute("customer", savedCustomer);
         redirectAttributes.addAttribute("account", account);
 
-        return "redirect:/teller/customer-details";
+        return "redirect:/teller/customer-details/" + savedCustomer.getCustomerId();
+    }
+
+    @GetMapping("customer-details/{customerId}")
+    public String showCustomerDetails(@PathVariable Long customerId, Model model) {
+        // Fetch the customer by ID
+        Customer customer = customerService.findCustomerById(customerId)
+                .orElseThrow(() -> new RuntimeException("Customer not found with ID: " + customerId));
+
+        // Add customer details to the model
+        model.addAttribute("customer", customer);
+
+        // Add the customer's accounts to the model
+        model.addAttribute("accounts", customer.getAccounts());
+
+        return "teller/customer-details";
     }
 
 
-    @GetMapping("customer-details")
-    public String showCustomerDetails(Model model) {
-        model.addAttribute("customer", new Customer());
+//    @GetMapping("customer-details")
+//    public String showCustomerDetails(Model model) {
+//        model.addAttribute("customer", new Customer());
+//        model.addAttribute("accountTypes", List.of("Savings", "Checking", "Business"));
+//        return "teller/customer-details";
+//    }
+
+    @GetMapping("/add-account")
+    public String showAddAccountForm(Model model) {
+        List<Customer> customers = customerService.getAllCustomers();
+        model.addAttribute("customers", customers);
         model.addAttribute("accountTypes", List.of("Savings", "Checking", "Business"));
-        return "teller/customer-details";
+        return "teller/add-account";
+    }
+
+    @PostMapping("/addAccount")
+    public String addAccountToCustomer(
+            @RequestParam Long customerId,
+            @RequestParam String accountType,
+            @RequestParam double initialBalance,
+            RedirectAttributes redirectAttributes) {
+
+        String accountNumber = "ACC" + System.currentTimeMillis();
+
+        // Call service to create the account
+        Account newAccount = accountService.createAccountForExistingCustomer(
+                customerId, accountNumber, accountType, initialBalance);
+        //redirectAttributes.addAttribute("customer", savedCustomer);
+        redirectAttributes.addAttribute("account", newAccount);
+
+        return "redirect:/teller/customer-details/" + customerId;
     }
 
      // Show Deposit Form
@@ -157,36 +195,65 @@ public class TellerController {
     }
 
     // Show Transfer Form
-    @GetMapping("/transfer")
-    public String showTransferForm(Model model) {
+    @GetMapping("/intra/transfer")
+    public String showIntraTransferForm(Model model) {
         List<Customer> customers = customerService.getAllCustomers();
         List<Account> accounts = accountService.getAllAccounts();
         model.addAttribute("customers", customers);
         model.addAttribute("accounts", accounts);
         model.addAttribute("accountTypes", List.of("Savings", "Checking", "Business"));
-        return "transactions/transfer-funds-page"; // Thymeleaf template for transfer
+        return "transactions/transfer-funds-intra-page"; // Thymeleaf template for transfer
     }
 
     // Perform Transfer
-    @PostMapping("/transfer")
-    public String transfer(@RequestParam String fromAccountId,
-                           @RequestParam String toAccountId,
+    @PostMapping("/intra/transfer")
+    public String intraTransfer(@RequestParam String fromAccountType,
+                           @RequestParam String targetAccountType,
                            @RequestParam double amount,
-                           @RequestParam Long fromCustomerId,
+                           @RequestParam Long customerId,
                            @RequestParam String description,
                            Model model) {
         try {
-            accountService.transfer(fromAccountId, toAccountId, amount, fromCustomerId,description);
+            accountService.intraTransfer(fromAccountType, targetAccountType, amount, customerId,description);
             model.addAttribute("message", "Transfer successful!");
         } catch (RuntimeException e) {
             model.addAttribute("error", e.getMessage());
         }
-        return "redirect:/transactions/transfer";
+        return "redirect:/transactions/intra/transfer";
     }
 
     private Role getOrCreateRole(String roleName) {
         return roleRepository.findByName(roleName)
                 .orElseGet(() -> roleRepository.save(new Role(roleName)));
+    }
+
+    // Show Transfer Form
+    @GetMapping("/transfer")
+    public String showTransferForm(Model model) {
+        List<Customer> customers = customerService.getAllCustomers();
+        model.addAttribute("customers", customers);
+        return "transactions/transfer-funds-page"; // Thymeleaf template for transfer
+    }
+
+
+
+    // Perform Transfer
+    @PostMapping("/transfer")
+    public String transfer(@RequestParam String fromAccountType,
+                           @RequestParam String targetAccountType,
+                           @RequestParam double amount,
+                           @RequestParam Long customerId,
+                           @RequestParam Long targetCustomerId,
+                           @RequestParam String description,
+                           Model model) {
+        try {
+
+            accountService.transfer(fromAccountType, targetAccountType, amount, customerId,targetCustomerId,description);
+            model.addAttribute("message", "Transfer successful!");
+        } catch (RuntimeException e) {
+            model.addAttribute("error", e.getMessage());
+        }
+        return "redirect:/transactions/transfer";
     }
 }
 

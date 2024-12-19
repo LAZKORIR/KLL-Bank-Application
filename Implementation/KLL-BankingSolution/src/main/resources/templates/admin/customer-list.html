@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Admin Dashboard - Customer Summary</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <script>
+        function filterCustomers() {
+            const keyword = document.getElementById('search-input').value.toLowerCase();
+            const rows = document.querySelectorAll('.customer-row');
+
+            rows.forEach(row => {
+                const name = row.querySelector('.customer-name').textContent.toLowerCase();
+                const phone = row.querySelector('.customer-phone').textContent.toLowerCase();
+                const email = row.querySelector('.customer-email').textContent.toLowerCase();
+                const accounts = row.querySelector('.customer-accounts').textContent.toLowerCase();
+
+                if (name.includes(keyword) || phone.includes(keyword) || email.includes(keyword) || accounts.includes(keyword)) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        }
+    </script>
+</head>
+<body>
+<div class="pane">
+    <div class="header">
+        <h1>Admin Dashboard</h1>
+    </div>
+
+    <!-- Search Section -->
+    <div class="search-section">
+        <h2>Search Customers</h2>
+        <input id="search-input" type="text" placeholder="Search by name, account type, account number, or phone" class="search-input" onkeyup="filterCustomers()">
+    </div>
+
+    <!-- Customer Summary Section -->
+    <div class="customer-summary-section">
+        <h2>Customer Summary</h2>
+        <table>
+            <thead>
+            <tr>
+                <th>Customer ID</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>Address</th>
+                <th>Accounts</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="customer : ${customers}" class="customer-row">
+                <td th:text="${customer.customerId}">1</td>
+                <td class="customer-name" th:text="${customer.firstName} + ' ' + ${customer.lastName}">John Doe</td>
+                <td class="customer-email" th:text="${customer.email}">johndoe@example.com</td>
+                <td class="customer-phone" th:text="${customer.phone}">123-456-7890</td>
+                <td>
+                    <span th:text="${customer.address.street}">123 Main St</span>,
+                    <span th:text="${customer.address.city}">Springfield</span>,
+                    <span th:text="${customer.address.state}">IL</span>,
+                    <span th:text="${customer.address.zip}">62704</span>
+                </td>
+                <td class="customer-accounts">
+                    <ul>
+                        <li th:each="account : ${customer.accounts}" th:text="${account.accountType} + ' - ' + ${account.accountNumber}">Savings - 123456</li>
+                    </ul>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Logout -->
+    <form th:action="@{/logout}" method="post">
+        <button type="submit" class="action-btn">Logout</button>
+    </form>
+</div>
+</body>
+</html>

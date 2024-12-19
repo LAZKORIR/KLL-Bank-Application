@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>All Users</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<div class="pane">
+    <h1>All Registered Users</h1>
+    <table>
+        <thead>
+        <tr>
+            <th>User ID</th>
+            <th>Username</th>
+            <th>Roles</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="user : ${users}">
+            <td th:text="${user.userId}">1</td>
+            <td th:text="${user.username}">admin</td>
+            <td>
+                <ul>
+                    <li th:each="role : ${user.roles}" th:text="${role.name}">ROLE_ADMIN</li>
+                </ul>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <form th:action="@{/logout}" method="post">
+        <button type="submit" class="action-btn">Logout</button>
+    </form>
+</div>
+</body>
+</html>

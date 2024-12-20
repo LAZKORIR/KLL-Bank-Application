@@ -59,6 +59,8 @@ public class AuthController {
                                @RequestParam String role,
                                Model model) {
         // Check if the username already exists
+        System.out.println("******************");
+        System.out.println(userService.findByUsername(username) );
         if (userService.findByUsername(username) != null) {
             // Add an error message to the model
             model.addAttribute("errorMessage", "Username '" + username + "' is already taken. Please choose a different one.");

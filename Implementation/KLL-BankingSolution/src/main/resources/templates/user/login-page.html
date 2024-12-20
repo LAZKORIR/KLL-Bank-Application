@@ -2,38 +2,74 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Login</title>
-    <link rel="stylesheet" href="/css/style.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: Arial, sans-serif;
+        }
+
+        .login-container {
+            max-width: 400px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .login-container h2 {
+            text-align: center;
+            color: #007bff;
+            margin-bottom: 20px;
+        }
+
+        .btn-primary {
+            background-color: #007bff;
+            border-color: #007bff;
+        }
+
+        .btn-primary:hover {
+            background-color: #0056b3;
+        }
+
+        .error {
+            color: #d9534f;
+        }
+
+        .success {
+            color: #5cb85c;
+        }
+
+        a {
+            color: #007bff;
+        }
+
+        a:hover {
+            text-decoration: none;
+        }
+    </style>
 </head>
 <body>
 <div class="login-container">
     <h2>Login</h2>
-
     <form th:action="@{/login}" th:object="${loginForm}" method="post">
-        <div>
-            <label for="username">Username:</label>
-            <input type="text" id="username" th:field="*{username}" required>
-            <span class="error" th:if="${#fields.hasErrors('username')}"
-                  th:text="${#fields.errors('username')}"></span>
+        <div class="mb-3">
+            <label for="username" class="form-label">Username:</label>
+            <input type="text" id="username" th:field="*{username}" class="form-control" required>
+            <div class="error" th:if="${#fields.hasErrors('username')}" th:text="${#fields.errors('username')}"></div>
         </div>
-
-        <div>
-            <label for="password">Password:</label>
-            <input type="password" id="password" th:field="*{password}" required>
-            <span class="error" th:if="${#fields.hasErrors('password')}"
-                  th:text="${#fields.errors('password')}"></span>
+        <div class="mb-3">
+            <label for="password" class="form-label">Password:</label>
+            <input type="password" id="password" th:field="*{password}" class="form-control" required>
+            <div class="error" th:if="${#fields.hasErrors('password')}" th:text="${#fields.errors('password')}"></div>
         </div>
-
-        <button type="submit">Login</button>
-
-        <div th:if="${loginError}" class="error">
-            <p th:text="${loginError}"></p>
-        </div>
-
-        <div th:if="${logoutMessage}" class="success">
-            <p th:text="${logoutMessage}"></p>
-        </div>
+        <button type="submit" class="btn btn-primary w-100">Login</button>
+        <div th:if="${loginError}" class="error mt-3" th:text="${loginError}"></div>
+        <div th:if="${logoutMessage}" class="success mt-3" th:text="${logoutMessage}"></div>
     </form>
-    <p>New here? <a th:href="@{/register}">Register</a></p>
+    <p class="mt-3 text-center">New here? <a th:href="@{/register}">Register</a></p>
 </div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

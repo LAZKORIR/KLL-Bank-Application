@@ -23,4 +23,19 @@ public class UserService {
     public User findByUsername(String username) {
         return userRepository.findByUsername(username).get();
     }
+
+    public void updateUser(Long id, User updatedUser) {
+        User existingUser = userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        existingUser.setUsername(updatedUser.getUsername());
+        existingUser.setRoles(updatedUser.getRoles());
+        userRepository.save(existingUser);
+    }
+
+    public void deleteUser(Long id) {
+        if (!userRepository.existsById(id)) {
+            throw new RuntimeException("User not found");
+        }
+        userRepository.deleteById(id);
+    }
 }

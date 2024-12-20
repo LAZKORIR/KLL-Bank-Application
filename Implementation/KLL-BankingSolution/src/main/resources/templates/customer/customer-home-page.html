@@ -100,21 +100,12 @@
         <h1>Welcome, <span th:text="${customer}">Customer</span>!</h1>
     </div>
 
-    <!-- Account Balances -->
     <div class="balance-section">
         <h2>Your Balances</h2>
         <div class="account-balances">
-            <div class="account-card">
-                <h3>Savings Account</h3>
-                <p th:text="${savingsBalance}">$0.00</p>
-            </div>
-            <div class="account-card">
-                <h3>Checking Account</h3>
-                <p th:text="${checkingBalance}">$0.00</p>
-            </div>
-            <div class="account-card">
-                <h3>Business Account</h3>
-                <p th:text="${businessBalance}">$0.00</p>
+            <div class="account-card" th:each="account : ${accounts}">
+                <h3 th:text="${account.accountType} + ' Account'">Account Type</h3>
+                <p th:text="${account.balance}">$0.00</p>
             </div>
         </div>
     </div>

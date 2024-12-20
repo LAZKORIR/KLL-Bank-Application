@@ -66,6 +66,19 @@ public class AccountService {
         return accounts.stream().mapToDouble(Account::getBalance).sum();
     }
 
+    // Check account balance
+    public List<Account> getAccountsByCustomerId(Long userId) {
+        Customer customer = customerRepository.findByUser_UserId(userId)
+                .orElseThrow(() -> new RuntimeException("Customer not found"));
+
+        List<Account> accounts = customer.getAccounts();
+        if (accounts.isEmpty()) {
+            throw new RuntimeException("No accounts found for the user");
+        }
+
+        return accounts;
+    }
+
 
     // Deposit money
     public void deposit(Long customerId, double amount, String accountType, String description) {

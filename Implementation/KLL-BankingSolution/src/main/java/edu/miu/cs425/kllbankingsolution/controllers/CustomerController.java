@@ -33,24 +33,19 @@ public class CustomerController {
                 .map(User::getUserId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        double balance = accountService.checkBalance(userId);
+        // Fetch all accounts dynamically
+        List<Account> accounts = accountService.getAccountsByCustomerId(userId);
+
         List<Transaction> transactions = accountService.getRecentTransactions(userId);
 
-        // Fetch balances for different account types
-        double savingsBalance = accountService.checkBalanceByType(userId, "SAVINGS");
-        double checkingBalance = accountService.checkBalanceByType(userId, "CHECKING");
-        double businessBalance = accountService.checkBalanceByType(userId, "BUSINESS");
-
-        model.addAttribute("savingsBalance", savingsBalance);
-        model.addAttribute("checkingBalance", checkingBalance);
-        model.addAttribute("businessBalance", businessBalance);
+        // Add accounts and transactions to the model
+        model.addAttribute("accounts", accounts);
         model.addAttribute("transactions", transactions);
-        //model.addAttribute("balance", balance);
-        //model.addAttribute("transactions", transactions);
         model.addAttribute("customer", username);
 
         return "customer/customer-home-page";
     }
+
 
     @GetMapping("/{customerId}/accounts")
     public ResponseEntity<List<Account>> getAccountsByCustomerId(@PathVariable Long customerId) {

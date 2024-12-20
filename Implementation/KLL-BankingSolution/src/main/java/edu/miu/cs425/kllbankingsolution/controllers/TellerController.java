@@ -12,6 +12,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.security.Principal;
 import java.util.List;
 import java.util.Optional;
 
@@ -34,7 +35,10 @@ public class TellerController {
     PasswordEncoder passwordEncoder;
 
     @GetMapping("/dashboard")
-    public String tellerDashboard() {
+    public String tellerDashboard(Model model, Principal principal) {
+        String username = principal.getName();
+        model.addAttribute("teller", username);
+
         return "teller/teller-home-page";
     }
 
@@ -162,9 +166,21 @@ public class TellerController {
                           @RequestParam String accountType,
                           @RequestParam String description,
                           Model model) {
+        try{
         accountService.deposit(customerId, amount,accountType, description);
-        model.addAttribute("message", "Deposit successful!");
+            // Add success flag and message
+            model.addAttribute("showModal", true);
+            model.addAttribute("modalType", "success");
+
+        model.addAttribute("successMessage", "Deposit successful!");
         return "redirect:/transactions/deposit";
+        } catch (Exception e) {
+            // Add failure flag and message
+            model.addAttribute("showModal", true);
+            model.addAttribute("modalType", "failure");
+            model.addAttribute("failureMessage", "Deposit failed: " + e.getMessage());
+            return "redirect:/transactions/deposit";
+        }
     }
 
     // Show Withdraw Form

@@ -3,7 +3,6 @@ package edu.miu.cs425.kllbankingsolution.service;
 import edu.miu.cs425.kllbankingsolution.entities.User;
 import edu.miu.cs425.kllbankingsolution.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -22,7 +21,6 @@ public class UserService {
 
     // Fetch user by username
     public User findByUsername(String username) {
-        return userRepository.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        return userRepository.findByUsername(username).get();
     }
 }

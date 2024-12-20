@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.security.Principal;
 import java.util.List;
 
 @Controller
@@ -28,7 +29,9 @@ public class AdminController {
     UserRepository userRepository;
 
     @GetMapping("/dashboard")
-    public String dashboard() {
+    public String dashboard(Model model,Principal principal) {
+        String username = principal.getName();
+        model.addAttribute("admin", username);
         return "admin/admin-home-page";
     }
 

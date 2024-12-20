@@ -56,15 +56,25 @@ public class AuthController {
     @PostMapping("/register")
     public String registerUser(@RequestParam String username,
                                @RequestParam String password,
-                               @RequestParam String role) {
-        // Find the role and add it to the user
+                               @RequestParam String role,
+                               Model model) {
+        // Check if the username already exists
+        if (userService.findByUsername(username) != null) {
+            // Add an error message to the model
+            model.addAttribute("errorMessage", "Username '" + username + "' is already taken. Please choose a different one.");
+            return "user/register"; // Return to the registration page with the error message
+        }
+
+        // Create a new user
         User user = new User();
         user.setUsername(username);
         user.setPassword(password);
 
+        // Encode the password
         Optional.of(user)
                 .ifPresent(u -> u.setPassword(passwordEncoder.encode(u.getPassword())));
 
+        // Assign the role
         roleRepository.findByName("ROLE_" + role)
                 .ifPresentOrElse(
                         userRole -> user.getRoles().add(userRole),
@@ -72,9 +82,13 @@ public class AuthController {
                             throw new IllegalArgumentException("Invalid role: " + role);
                         }
                 );
+
+        // Save the user
         userService.addUser(user);
+
         return "redirect:/login";
     }
+
 
     @GetMapping("/home")
     public String home() {

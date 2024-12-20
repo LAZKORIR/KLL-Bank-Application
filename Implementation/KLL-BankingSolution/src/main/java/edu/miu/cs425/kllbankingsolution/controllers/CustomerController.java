@@ -36,8 +36,17 @@ public class CustomerController {
         double balance = accountService.checkBalance(userId);
         List<Transaction> transactions = accountService.getRecentTransactions(userId);
 
-        model.addAttribute("balance", balance);
+        // Fetch balances for different account types
+        double savingsBalance = accountService.checkBalanceByType(userId, "SAVINGS");
+        double checkingBalance = accountService.checkBalanceByType(userId, "CHECKING");
+        double businessBalance = accountService.checkBalanceByType(userId, "BUSINESS");
+
+        model.addAttribute("savingsBalance", savingsBalance);
+        model.addAttribute("checkingBalance", checkingBalance);
+        model.addAttribute("businessBalance", businessBalance);
         model.addAttribute("transactions", transactions);
+        //model.addAttribute("balance", balance);
+        //model.addAttribute("transactions", transactions);
         model.addAttribute("customer", username);
 
         return "customer/customer-home-page";

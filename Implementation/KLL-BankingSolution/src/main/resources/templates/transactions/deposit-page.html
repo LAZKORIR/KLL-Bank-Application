@@ -14,7 +14,6 @@
             <label for="customerId" class="form-label">Select Customer</label>
             <select id="customerId" name="customerId" class="form-select" required>
                 <option value="" disabled selected>Select a customer</option>
-                <!-- Dynamically populate customers -->
                 <th:block th:each="customer : ${customers}">
                     <option th:value="${customer.customerId}" th:text="${customer.firstName} + ' ' + ${customer.lastName}"></option>
                 </th:block>
@@ -24,9 +23,8 @@
             <label for="accountType" class="form-label">Select Account Type</label>
             <select id="accountType" name="accountType" class="form-select" required>
                 <option value="" disabled selected>Select an account type</option>
-                <!-- Dynamically populate accounts -->
                 <th:block th:each="accountType : ${accountTypes}">
-                    <option  th:value="${accountType}" th:text="${accountType}"></option>
+                    <option th:value="${accountType}" th:text="${accountType}"></option>
                 </th:block>
             </select>
         </div>
@@ -41,6 +39,54 @@
         <button type="submit" class="btn btn-primary">Deposit</button>
     </form>
 </div>
+<!-- Go Back Button -->
+<div class="mb-4">
+    <a href="javascript:history.back()" class="btn btn-primary btn-sm">Go Back</a>
+</div>
+
+<!-- Success Modal -->
+<div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title text-success" id="successModalLabel">Success</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p th:text="${modalMessage}"></p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Failure Modal -->
+<div class="modal fade" id="failureModal" tabindex="-1" aria-labelledby="failureModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title text-danger" id="failureModalLabel">Failure</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p th:text="${modalMessage}"></p>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Check if modal needs to be shown
+        const showModal = [[${showModal}]]; // Flag from backend
+        const modalType = "[[${modalType}]]"; // 'success' or 'failure'
+
+        if (showModal) {
+            const modalId = modalType === 'success' ? 'successModal' : 'failureModal';
+            const modal = new bootstrap.Modal(document.getElementById(modalId));
+            modal.show();
+        }
+    });
+</script>
 </body>
 </html>
